@@ -101,15 +101,29 @@ app.post("/create", function (req, res) {
   const obj = Object.values(books).find(
     (item) => item.BookID === req.body.bookId
   );
-  if (obj) {
+  if (!obj) {
     books.push({
       BookID: req.body.bookId,
       Title: req.body.title,
       Author: req.body.author,
     });
-    res.send("Book successfully added");
+    res.send("Okay");
   } else {
-    res.send("Book exists already");
+    res.send("Fail");
+  }
+});
+
+app.post("/delete", function (req, res) {
+  console.log("Posting Data", req.body);
+
+  const obj = Object.values(books).find(
+    (item) => item.BookID === req.body.bookId
+  );
+  if (obj) {
+    books.splice(books.indexOf(obj), 1);
+    res.send("Okay");
+  } else {
+    res.send("Fail");
   }
 });
 

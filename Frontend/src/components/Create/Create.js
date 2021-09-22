@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
+import cookie from "react-cookies";
+import { Redirect } from "react-router";
 
 class Create extends Component {
   constructor(props) {
@@ -8,6 +10,8 @@ class Create extends Component {
       bookId: "",
       title: "",
       author: "",
+      isError: false,
+      redirectVar: "",
     };
   }
   updateAuthor = (event) => {
@@ -33,19 +37,34 @@ class Create extends Component {
     }));
   };
 
+  componentDidMount() {
+    if (cookie.load("cookie")) {
+      this.setState({ redirectVar: <Redirect to="/create" /> });
+    } else {
+      this.setState({ redirectVar: <Redirect to="/login" /> });
+    }
+  }
+
   onSubmit = (event) => {
-    const data = this.state;
+    const { isError, redirectVar, ...data } = this.state;
     axios.post("http://localhost:3001/create", data).then((res) => {
-      console.log(res);
+      if (res.data == "Okay") {
+        this.setState({ isError: false, redirectVar: <Redirect to="/home" /> });
+      } else {
+        this.setState({
+          isError: true,
+          redirectVar: <Redirect to="/create" />,
+        });
+      }
     });
-    // window.location = "/home";
   };
   render() {
     return (
       <div>
-        <br />
-        <div class="container">
-          <form action="http://127.0.0.1:3000/create" method="post">
+        {this.state.redirectVar}
+        <div>
+          <br />
+          <div class="container">
             <div style={{ width: "30%" }} class="form-group">
               <input
                 type="text"
@@ -78,6 +97,9 @@ class Create extends Component {
                 onChange={(event) => this.updateAuthor(event)}
               />
             </div>
+            {this.state.isError && (
+              <div className="errorMessage"> Book exists already </div>
+            )}
             <br />
             <div style={{ width: "30%" }}>
               <button
@@ -88,7 +110,7 @@ class Create extends Component {
                 Create
               </button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     );
