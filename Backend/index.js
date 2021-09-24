@@ -80,7 +80,10 @@ app.post("/login", function (req, res) {
       res.writeHead(200, {
         "Content-Type": "text/plain",
       });
+      res.write("Okay");
       res.end("Successful Login");
+    } else {
+      res.send("Fail");
     }
   });
 });

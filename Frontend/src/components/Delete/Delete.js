@@ -12,6 +12,15 @@ class Delete extends Component {
       redirectVar: "",
     };
   }
+
+  componentDidMount() {
+    if (cookie.load("cookie")) {
+      this.setState({ redirectVar: <Redirect to="/delete" /> });
+    } else {
+      this.setState({ redirectVar: <Redirect to="/login" /> });
+    }
+  }
+
   handleChange = (event) => {
     const val = event.target.value;
     this.setState((prevState) => ({
